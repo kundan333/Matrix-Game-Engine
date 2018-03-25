@@ -19,7 +19,9 @@ public class DisplayManager {
 		
 		
 		try {
+			
 			Display.setDisplayMode(new DisplayMode(WIDTH,HEIGHT) );
+			//Display.setFullscreen(true);
 			Display.create(new PixelFormat(),attribs);
 			Display.setTitle("Java Game");
 		} catch (LWJGLException e) {
