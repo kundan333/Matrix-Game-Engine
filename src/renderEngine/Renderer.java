@@ -11,11 +11,12 @@ import entities.Entity;
 import models.RawModel;
 import models.TexturedModel;
 import shaders.StaticShader;
+import textures.ModelTexture;
 import toolbox.Maths;
 
 public class Renderer {
 	private static final float FOV  = 70;
-	private static final float NEAR_PLANE = 1.0f;
+	private static final float NEAR_PLANE = 3.0f;
 	private static final float FAR_PLANE = 1000;
 	
 	
@@ -35,7 +36,11 @@ public class Renderer {
 		
 		GL11.glEnable(GL11.GL_DEPTH_TEST); //which triangle is front of each other
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT|GL11.GL_DEPTH_BUFFER_BIT);
-		GL11.glClearColor(0, 1, 0, 1);//RGB
+		GL11.glClearColor(0, 0, 0, 1);//RGB
+		//GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+		
+		
+	
 		
 	}
 	public void render(Entity entity , StaticShader shader) {
@@ -44,8 +49,12 @@ public class Renderer {
 		GL30.glBindVertexArray(rawModel.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
+		GL20.glEnableVertexAttribArray(2);
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
 		shader.loadTransfromationMatrix(transformationMatrix);
+		
+		ModelTexture texture = model.getTexture();
+		shader.loadShineVariable(texture.getShineDamper(), texture.getReflectivity());
 		
 		
 		
@@ -55,6 +64,8 @@ public class Renderer {
 		//GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, model.getVertexCount());
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
+		GL20.glDisableVertexAttribArray(2);
+		
 		GL30.glBindVertexArray(0);
 		
 	}

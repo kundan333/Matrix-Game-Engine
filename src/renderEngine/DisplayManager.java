@@ -24,6 +24,7 @@ public class DisplayManager {
 			//Display.setFullscreen(true);
 			Display.create(new PixelFormat(),attribs);
 			Display.setTitle("Java Game");
+		
 		} catch (LWJGLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
