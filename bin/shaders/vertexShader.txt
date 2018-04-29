@@ -13,6 +13,7 @@ out vec3 toCameraVector;
 
 uniform  mat4 transformationMatrix;
 //4by4 matrix 4D
+
 uniform  mat4 projectionMatrix;
 uniform  mat4 viewMatrix;
 uniform  vec3 lightPosition;
@@ -22,8 +23,8 @@ void main(void){
 		vec4 worldPosition = transformationMatrix * vec4(position,1.0);
 		//worldPosition is position of object with transformationMatrix
 		
-		
-		gl_Position = viewMatrix * projectionMatrix * worldPosition;
+	//This is important---- Matrix must be in correct order if they are not result will be different----	
+		gl_Position = projectionMatrix *viewMatrix *  worldPosition;
 	    
 	    pass_textureCoords = textureCoords;
 	    

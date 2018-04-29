@@ -1,6 +1,7 @@
 package renderEngine;
 
 import org.lwjgl.LWJGLException;
+
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -11,6 +12,8 @@ public class DisplayManager {
 	private static final int WIDTH =1280;
 	private static final int HEIGHT =720;
 	private static final int FPS_CAP = 120;
+	
+	
 	
 	public static void createDisplay(){
 		
@@ -23,7 +26,10 @@ public class DisplayManager {
 			Display.setDisplayMode(new DisplayMode(WIDTH,HEIGHT) );
 			//Display.setFullscreen(true);
 			Display.create(new PixelFormat(),attribs);
-			Display.setTitle("Java Game");
+			//Display.setTitle("Java Game");
+			
+			
+			
 		
 		} catch (LWJGLException e) {
 			// TODO Auto-generated catch block
@@ -42,7 +48,7 @@ public class DisplayManager {
 	public static void closeDisplay(){
 		Display.destroy();
 	}
-	
+
 	
 
 }

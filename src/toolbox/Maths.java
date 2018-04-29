@@ -28,7 +28,9 @@ import entities.Camera;
 			Matrix4f.rotate((float)Math.toRadians(camera.getYaw()), new Vector3f(0,1,0),viewMatrix, viewMatrix);
 			Vector3f cameraPos =  camera.getPosition();
 			Vector3f negativeCameraPos = new Vector3f(-cameraPos.x,-cameraPos.y,-cameraPos.z);//for moving whole world in opposite direction 
+			//Matrix4f.scale(new Vector3f(1,1,0.5f), viewMatrix, viewMatrix);
 			Matrix4f.translate(negativeCameraPos, viewMatrix, viewMatrix);
+			
 			
 			return viewMatrix;
 		}

@@ -40,6 +40,7 @@ public class Loader {
 	public int loadTexture(String filename) {
 		Texture texture = null ;
 		try {
+			/* Used Slick utils for texture loading  */
 			texture = TextureLoader.getTexture("PNG", new FileInputStream("res/"+filename+".png"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
