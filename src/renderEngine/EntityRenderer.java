@@ -3,7 +3,6 @@ package renderEngine;
 import java.util.List;
 import java.util.Map;
 
-import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
@@ -17,23 +16,17 @@ import shaders.StaticShader;
 import textures.ModelTexture;
 import toolbox.Maths;
 
-public class Renderer {
-	private static final float FOV  = 70;
-	private static final float NEAR_PLANE = 0.1f;
-	private static final float FAR_PLANE = 1000;
+public class EntityRenderer {
 	
 	
-	private Matrix4f projectionMatrix;
+	
 	private StaticShader shader;
 	
 	
-	public Renderer(StaticShader shader) {
+	public EntityRenderer(StaticShader shader , Matrix4f projectionMatrix) {
 		this.shader= shader;
 		
-		GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glCullFace(GL11.GL_BACK);
 		
-		createProjectionMatrix();
 		shader.start();
 		shader.loadProjectionMatrix(projectionMatrix);
 		shader.stop();
@@ -41,17 +34,7 @@ public class Renderer {
 	}
 	
 
-	public void prepare() {
-		
-		GL11.glEnable(GL11.GL_DEPTH_TEST); //which triangle is front of each other
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT|GL11.GL_DEPTH_BUFFER_BIT);
-		GL11.glClearColor(0, 0, 0, 1);//RGB
-		//GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-		
-		
 	
-		
-	}
 	
 	public void render(Map<TexturedModel,List<Entity>> entities) {
 		
@@ -80,8 +63,16 @@ public class Renderer {
 		GL20.glEnableVertexAttribArray(2);
 		
 		ModelTexture texture = model.getTexture();
-		shader.loadShineVariable(texture.getShineDamper(), texture.getReflectivity());
 		
+		if(texture.isHasTransparency()) {
+			
+			MasterRenderer.disableCulling();			
+			
+		}
+		
+		
+		shader.loadShineVariable(texture.getShineDamper(), texture.getReflectivity());
+		shader.loadFakeLighting(texture.isFakeLighting());
 		
 		
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -94,6 +85,7 @@ public class Renderer {
 	}
 	
 	private void unbindTexturedModel() {
+		MasterRenderer.enableCulling();
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
 		GL20.glDisableVertexAttribArray(2);
@@ -137,25 +129,7 @@ public class Renderer {
 	}
 	*/
 
-	private void createProjectionMatrix() {
-		
-		float aspectRatio = (float) Display.getWidth() / (float) Display.getHeight();
-		
-		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))) * aspectRatio);
-		
-		float x_scale = y_scale / aspectRatio;
-		float frustum_length = FAR_PLANE - NEAR_PLANE;
-
-		projectionMatrix = new Matrix4f();
-		projectionMatrix.m00 = x_scale;
-		projectionMatrix.m11 = y_scale;
-		projectionMatrix.m22 = -((FAR_PLANE + NEAR_PLANE) / frustum_length);
-		projectionMatrix.m23 = -1;
-		projectionMatrix.m32 = -((2 * NEAR_PLANE * FAR_PLANE) / frustum_length);
-		projectionMatrix.m33 = 0;
-		
-		
-	}
+	
 	
 	
 	

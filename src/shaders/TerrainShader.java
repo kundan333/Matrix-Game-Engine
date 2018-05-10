@@ -7,11 +7,11 @@ import entities.Camera;
 import entities.Light;
 import toolbox.Maths;
 
-public class StaticShader extends ShaderProgram {
+public class TerrainShader extends ShaderProgram {
 	
-
-	private static final String VERTEX_FILE ="src/shaders/vertexShader.txt";
-	private static final String FRAGMENT_FILE ="src/shaders/fragmentShader.txt";
+	
+	private static final String VERTEX_FILE ="src/shaders/terrainVertexShader.txt";
+	private static final String FRAGMENT_FILE ="src/shaders/terrainFragmentShader.txt";
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;
 	private int location_viewMatrix;
@@ -19,10 +19,9 @@ public class StaticShader extends ShaderProgram {
 	private int location_lightColor;
 	private int location_shineDamper;
 	private int location_reflectivity;
-	private int location_fakeLighting;
 	private int location_skyColor;
 	
-	public StaticShader() {
+	public TerrainShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 		// TODO Auto-generated constructor stub
 	}
@@ -47,12 +46,8 @@ public class StaticShader extends ShaderProgram {
 		location_lightColor = super.getUnitformLocation("lightColor");
 		location_shineDamper = super.getUnitformLocation("shineDamper");
 		location_reflectivity = super.getUnitformLocation("reflectivity");
-		location_fakeLighting = super.getUnitformLocation("useFakeLighting");
 		location_skyColor = super.getUnitformLocation("skyColor");
 
-	}
-	public void loadFakeLighting(boolean fakeLighting) {
-		super.loadBoolean(location_fakeLighting, fakeLighting);
 	}
 	
 	public void loadTransfromationMatrix(Matrix4f matrix) {
@@ -78,15 +73,10 @@ public class StaticShader extends ShaderProgram {
 		super.loadFloat(location_reflectivity, reflectivity);
 		
 	}
-	
-	public void loadSkyColor(float r,float g, float b) {
-		
+	public void loadSkyColor(float r,float g,float b) 
+	{
 		super.loadVector(location_skyColor,new Vector3f(r,g,b));
 	}
-	
-	
-	
-	
 	
 	
 
