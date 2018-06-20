@@ -25,9 +25,9 @@ public class MasterRenderer {
 	private static final float FOV  = 70;
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 1000;
-	private static final float RED =0.9f ;
-	private static final float GREEN = 0.9f;
-	private static final float BLUE =0.9f ;
+	private static final float RED =0.6f ;
+	private static final float GREEN = 0.6f;
+	private static final float BLUE =0.6f ;
 	
 	
 	private EntityRenderer renderer ;
@@ -57,6 +57,7 @@ public class MasterRenderer {
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glCullFace(GL11.GL_BACK);
 		
+		
 	}
 	
 	public static void disableCulling() {
@@ -68,12 +69,13 @@ public class MasterRenderer {
 	
 	
 	
-	public void render(Light sun,Camera camera) {
+	public void render(List<Light> sun,Camera camera) {
 		prepare();
 		shader.start();
 		shader.loadSkyColor(RED, GREEN, BLUE);
 	
 		shader.loadLight(sun);
+		
 		shader.loadViewMatrix(camera);
 		renderer.render(entities);
 		shader.stop();

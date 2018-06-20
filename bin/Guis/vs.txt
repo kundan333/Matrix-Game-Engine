@@ -1,0 +1,17 @@
+#version 150
+
+in vec2 positions;
+
+
+out vec2 passTextCoods;
+
+uniform mat4 transformation;
+
+void main()
+{
+
+gl_Position = transformation * vec4(positions,0,1.0);
+passTextCoods = vec2((positions.x +1.0)/2.0 , 1-(positions.y+1.0) /2.0 );
+
+
+}

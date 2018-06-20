@@ -8,20 +8,24 @@ in vec3 normals;
 
 out vec2 pass_textureCoords;
 out vec3 surfaceNormal;
-out vec3 toLightVector;
+out vec3 toLightVector[4];
 out vec3 toCameraVector;
 out float visibility;
+
+uniform int numberOfRows;
+uniform vec2 OffSet;
+
 
 uniform  mat4 transformationMatrix;
 //4by4 matrix 4D
 
 uniform  mat4 projectionMatrix;
 uniform  mat4 viewMatrix;
-uniform  vec3 lightPosition;
+uniform  vec3 lightPosition[4];
 uniform float useFakeLighting;
 
-const float density = 0.007;
-const float gradient = 1.5;
+const float density = 0.005;
+const float gradient = 5;
 
 
 void main(void){
@@ -30,11 +34,12 @@ void main(void){
 		//worldPosition is position of object with transformationMatrix
 		vec4 positionRelativeToCam = viewMatrix * worldPosition;
 
+
 		
 	//This is important---- Matrix must be in correct order if they are not result will be different----	
 		gl_Position = projectionMatrix * positionRelativeToCam;
 	    
-	    pass_textureCoords = textureCoords;
+	    pass_textureCoords =  textureCoords/numberOfRows + OffSet ;
 	    
 	    vec3 actualNormal = normals;
 	    if(useFakeLighting > 0.5){
@@ -48,7 +53,11 @@ void main(void){
 	    
 	    //transformationMatrix is 4D w is included to more search on internet
 	    
-	    toLightVector = lightPosition - worldPosition.xyz;
+	    for(int i=0;i<4;i++){
+	    
+	    toLightVector[i] = lightPosition[i] - worldPosition.xyz;
+	    }
+	    
 	    //worldPosition is 4D vector
 	    
 	    float distance = length(positionRelativeToCam.xyz);
