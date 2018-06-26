@@ -73,8 +73,8 @@ public class Terrain {
 	{
 		float terrainX = worldX -this.x;
 		float terrainZ = worldZ - this.z;
-		System.out.println("worldX : "+worldX+" worldZ : "+worldZ);
-		System.out.println("this.x : "+this.x+" this.z : "+this.z);
+	//	System.out.println("worldX : "+worldX+" worldZ : "+worldZ);
+	//	System.out.println("this.x : "+this.x+" this.z : "+this.z);
 		//System.out.println(heights.length-1);
 		float gridSquareSize = SIZE / ((float)heights.length-1);
 		//System.out.println(gridSquareSize);
@@ -88,7 +88,7 @@ public class Terrain {
 		}
 		
 		float xCoord = (terrainX % gridSquareSize)/gridSquareSize;
-		System.out.println(" terrainX % gridSquareSize : " +terrainX % gridSquareSize);
+		//System.out.println(" terrainX % gridSquareSize : " +terrainX % gridSquareSize);
 		
 		float zCoord = (terrainX % gridSquareSize)/gridSquareSize;
 		float answer;

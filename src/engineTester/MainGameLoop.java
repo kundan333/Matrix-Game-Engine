@@ -27,6 +27,7 @@ import terrains.Terrain;
 import textures.ModelTexture;
 import textures.TerrainTexture;
 import textures.TerrainTexturePack;
+import toolbox.MousePicker;
 
 public class MainGameLoop {
 	public static long lastFPS;
@@ -112,9 +113,9 @@ public class MainGameLoop {
 		}
 		
 		List<Light> lights = new ArrayList<Light>();
-		System.out.println("Height -- "+terrain2.getHeightOfTerrain(200, -200));
+		//System.out.println("Height -- "+terrain2.getHeightOfTerrain(200, -200));
 		
-		Light light = new Light(new Vector3f(20000,20000,2000),new Vector3f(0.2f,0.2f,0.2f));
+		Light light = new Light(new Vector3f(20000,20000,2000),new Vector3f(1f,1f,1f));
 		lights.add(light);
 		lights.add(new Light(new Vector3f(200,15,-200),new Vector3f(10,0,0),new Vector3f(1,0.1f,0.002f)));
 		lights.add(new Light(new Vector3f(55.5f,-19,-55.5f),new Vector3f(0,5,0),new Vector3f(1,0.1f,0.002f)));
@@ -126,7 +127,7 @@ public class MainGameLoop {
 		//Terrain terrain = new Terrain(-1,-1,loader,new TerrainTexturePack(backgroundTexture,rTexture,gTexture,bTexture),blendMap,"heightmap");
 		
 		Camera camera = new Camera(player);	
-		MasterRenderer renderer = new MasterRenderer();
+		MasterRenderer renderer = new MasterRenderer(loader);
 		
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
 		
@@ -137,6 +138,8 @@ public class MainGameLoop {
 		guis.add(gui);
 		
 		
+		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix());
+		
 		lastFPS = getTime();
 		
 		while(!Display.isCloseRequested()){
@@ -146,8 +149,13 @@ public class MainGameLoop {
 		
 			
 			player.move(terrain2);
-			System.out.println(" player x "+player.getPosition().getX()+ "player y "+player.getPosition().getY()+" player z"+player.getPosition().getX()); 
+		//	System.out.println(" player x "+player.getPosition().getX()+ "player y "+player.getPosition().getY()+" player z"+player.getPosition().getX()); 
 			camera.move();
+			
+			picker.update();
+			
+			System.out.println(picker.getCurrentRay());
+			
 			renderer.processEntity(player);
 	
 			//Game Loop

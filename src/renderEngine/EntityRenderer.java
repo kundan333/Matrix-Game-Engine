@@ -66,7 +66,7 @@ public class EntityRenderer {
 		
 		shader.loadNumberOfRows(texture.getNumberOfRows());
 		
-		System.out.println(texture.getNumberOfRows());
+		//System.out.println(texture.getNumberOfRows());
 		if(texture.isHasTransparency()) {
 			
 			MasterRenderer.disableCulling();			

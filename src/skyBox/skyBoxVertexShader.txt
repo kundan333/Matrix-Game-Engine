@@ -1,0 +1,15 @@
+#version 400
+
+in vec3 positoins;
+
+out vec3 pass_txtCoods;
+
+uniform mat4 projection_matrix;
+uniform mat4 viewMatrix ;
+
+void main(){
+
+		gl_Position = projection_matrix * viewMatrix * vec4(positoins,1);
+		pass_txtCoods = positoins;
+
+}

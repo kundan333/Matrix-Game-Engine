@@ -81,7 +81,7 @@ public class StaticShader extends ShaderProgram {
 	
 	
 	public void loadNumberOfRows(int rows) {
-		System.out.println("rows");
+		//System.out.println("rows");
 		super.loadInt(location_rows, rows);
 		
 	}
