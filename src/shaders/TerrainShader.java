@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 import entities.Camera;
 import entities.Light;
@@ -29,6 +30,9 @@ public class TerrainShader extends ShaderProgram {
 	private int location_gTexture;
 	private int location_bTexture;
 	private int location_blendMap;
+	private int location_plane;
+	
+	
 	
 	public TerrainShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -48,19 +52,21 @@ public class TerrainShader extends ShaderProgram {
 	protected void getAllUniformLocation() {
 		
 		// TODO Auto-generated method stub
-		location_transformationMatrix = super.getUnitformLocation("transformationMatrix");
-		location_projectionMatrix = super.getUnitformLocation("projectionMatrix");
-		location_viewMatrix = super.getUnitformLocation("viewMatrix");
+		location_transformationMatrix = super.getUniformLocation("transformationMatrix");
+		location_projectionMatrix = super.getUniformLocation("projectionMatrix");
+		location_viewMatrix = super.getUniformLocation("viewMatrix");
 		
-		location_shineDamper = super.getUnitformLocation("shineDamper");
-		location_reflectivity = super.getUnitformLocation("reflectivity");
-		location_skyColor = super.getUnitformLocation("skyColor");
+		location_shineDamper = super.getUniformLocation("shineDamper");
+		location_reflectivity = super.getUniformLocation("reflectivity");
+		location_skyColor = super.getUniformLocation("skyColor");
 		
-		location_backgroundTexture = super.getUnitformLocation("backgroundTexture");
-		location_rTexture = super.getUnitformLocation("rTexture");
-		location_gTexture = super.getUnitformLocation("gTexture");
-		location_bTexture = super.getUnitformLocation("bTexture");
-		location_blendMap = super.getUnitformLocation("blendMap");
+		location_backgroundTexture = super.getUniformLocation("backgroundTexture");
+		location_rTexture = super.getUniformLocation("rTexture");
+		location_gTexture = super.getUniformLocation("gTexture");
+		location_bTexture = super.getUniformLocation("bTexture");
+		location_blendMap = super.getUniformLocation("blendMap");
+		location_plane = super.getUniformLocation("plane");
+		
 		
 		location_lightPosition = new int[MAX_LIGHT];
 		location_lightColor = new int[MAX_LIGHT];
@@ -69,13 +75,18 @@ public class TerrainShader extends ShaderProgram {
 		
 		for(int i=0;i<MAX_LIGHT;i++) {
 			
-			location_lightPosition[i] =super.getUnitformLocation("lightPosition["+i+"]");
-			location_lightColor[i] = super.getUnitformLocation("lightColor["+i+"]");
-			location_attenuation[i] = super.getUnitformLocation("attenuation["+i+"]");
+			location_lightPosition[i] =super.getUniformLocation("lightPosition["+i+"]");
+			location_lightColor[i] = super.getUniformLocation("lightColor["+i+"]");
+			location_attenuation[i] = super.getUniformLocation("attenuation["+i+"]");
 			
 			
 		}
 		
+		
+	}
+	
+	public void loadPlane(Vector4f plane) {
+		super.loadVector4f(location_plane, plane);
 		
 	}
 	

@@ -64,7 +64,7 @@ public class DisplayManager {
 	}
 
 	public static long getTime() {
-	    return System.nanoTime() / 1000000;
+	    return System.nanoTime() / 1000000; //millis
 	}
 	/*
 	public static long getTime() {

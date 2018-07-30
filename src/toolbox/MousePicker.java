@@ -8,20 +8,29 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import entities.Camera;
+import terrains.Terrain;
 
 public class MousePicker {
+	
+	
+	private static final int RECURSION_COUNT = 200;
+	private static final float RAY_RANGE = 600;
+	
 	
 	private Vector3f currentRay;
 	
 	private Matrix4f projectionMatrix;
 	private Matrix4f viewMatrix;
 	private Camera camera;
+	private Terrain terrain;
+	private Vector3f currentTerrainPoint;
 	
-	public MousePicker(Camera cam,Matrix4f projection) {
+	
+	public MousePicker(Camera cam,Matrix4f projection ,Terrain terrain) {
 		this.camera = cam;
 		this.projectionMatrix = projection;
 		this.viewMatrix = Maths.createViewMatrix(camera);
-		
+		this.terrain = terrain;
 		
 		
 	}
@@ -35,6 +44,14 @@ public class MousePicker {
 		
 		viewMatrix = Maths.createViewMatrix(camera);
 		currentRay = calculateMouseRay();
+		
+		if (intersectionInRange(0, RAY_RANGE, currentRay)) {
+			currentTerrainPoint = binarySearch(0, 0, RAY_RANGE, currentRay);
+		} else {
+			currentTerrainPoint = null;
+		}
+		
+		
 		
 	}
 	private Vector3f calculateMouseRay() {
@@ -73,12 +90,77 @@ public class MousePicker {
 	
 	
 	private Vector2f getNormalizedDeviceCoords(float mouseX,float mouseY) {
-		
-		float x = (2f *mouseX)/ Display.getWidth() -1;
+		//2mouse
+		float x = (2f *mouseX)/ Display.getWidth() -1; // -1 because normalize device coods are between 0 and 1/-1 
 		float y = (2f *mouseY)/Display.getHeight() -1;
 		return new Vector2f(x,y);
 		
 	}
+	
+	//*********************************************************
+	
+	
+	private boolean intersectionInRange(float start, float finish, Vector3f ray) {
+		Vector3f startPoint = getPointOnRay(ray, start);
+		Vector3f endPoint = getPointOnRay(ray, finish);
+		if (!isUnderGround(startPoint) && isUnderGround(endPoint)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	
+	private Vector3f getPointOnRay(Vector3f ray, float distance) {
+		Vector3f camPos = camera.getPosition();
+		Vector3f start = new Vector3f(camPos.x, camPos.y, camPos.z);
+		Vector3f scaledRay = new Vector3f(ray.x * distance, ray.y * distance, ray.z * distance);
+		return Vector3f.add(start, scaledRay, null);
+	}
+	
+	
+
+	private boolean isUnderGround(Vector3f testPoint) {
+		Terrain terrain = getTerrain(testPoint.getX(), testPoint.getZ());
+		float height = 0;
+		if (terrain != null) {
+			height = terrain.getHeightOfTerrain(testPoint.getX(), testPoint.getZ());
+		}
+		if (testPoint.y < height) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	
+	
+
+	private Vector3f binarySearch(int count, float start, float finish, Vector3f ray) {
+		float half = start + ((finish - start) / 2f);
+		if (count >= RECURSION_COUNT) {
+			Vector3f endPoint = getPointOnRay(ray, half);
+			Terrain terrain = getTerrain(endPoint.getX(), endPoint.getZ());
+			if (terrain != null) {
+				return endPoint;
+			} else {
+				return null;
+			}
+		}
+		if (intersectionInRange(start, half, ray)) {
+			return binarySearch(count + 1, start, half, ray);
+		} else {
+			return binarySearch(count + 1, half, finish, ray);
+		}
+	}
+	
+	private Terrain getTerrain(float worldX, float worldZ) {
+		return terrain;
+	}
+
+	
+	
+	
 	
 	
 	

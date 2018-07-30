@@ -24,8 +24,10 @@ uniform  mat4 viewMatrix;
 uniform  vec3 lightPosition[4];
 uniform float useFakeLighting;
 
-const float density = 0.005;
+const float density = 0.0005;
 const float gradient = 5;
+
+uniform vec4 plane ;
 
 
 void main(void){
@@ -34,9 +36,10 @@ void main(void){
 		//worldPosition is position of object with transformationMatrix
 		vec4 positionRelativeToCam = viewMatrix * worldPosition;
 
-
+		gl_ClipDistance[0]= dot(worldPosition,plane);
 		
 	//This is important---- Matrix must be in correct order if they are not result will be different----	
+	
 		gl_Position = projectionMatrix * positionRelativeToCam;
 	    
 	    pass_textureCoords =  textureCoords/numberOfRows + OffSet ;

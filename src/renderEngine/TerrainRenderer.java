@@ -52,8 +52,12 @@ public class TerrainRenderer {
 	
 	
 	private void prepareTerrain(Terrain terrain) {
+		
+		
+		
 		RawModel rawModel = terrain.getModel();
 		GL30.glBindVertexArray(rawModel.getVaoID());
+		
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
 		GL20.glEnableVertexAttribArray(2);

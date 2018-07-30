@@ -10,7 +10,7 @@ public class Camera {
 	
 	private float distanceFromPlayer = 50;
 	private float angleAroundPlayer = 0 ;
-	
+	private static final float YOFFSET = 3;
 	
 	
 	private Vector3f position =new Vector3f(0,0,0);
@@ -75,6 +75,11 @@ public class Camera {
 	public float getPitch() {
 		return pitch;
 	}
+	
+	public void invertPitch() {
+		this.pitch = -pitch;
+	}
+	
 	public float getYaw() {
 		return yaw;
 	}
@@ -94,7 +99,7 @@ public class Camera {
 		// minus offset because camera is in negative x,z direction
 		position.z = player.getPosition().z - offsetZ;
 		
-		position.y = player.getPosition().y + varticalDistance;
+		position.y = player.getPosition().y + varticalDistance + YOFFSET ;
 		
 		
 	}

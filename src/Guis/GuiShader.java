@@ -21,7 +21,7 @@ public class GuiShader extends ShaderProgram {
 	@Override
 	protected void getAllUniformLocation() {
 		// TODO Auto-generated method stub
-		location_transformationMatrix = super.getUnitformLocation("transformation");
+		location_transformationMatrix = super.getUniformLocation("transformation");
 		
 	}
 

@@ -5,6 +5,7 @@ import java.util.List;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 import entities.Camera;
 import entities.Light;
@@ -29,6 +30,8 @@ public class StaticShader extends ShaderProgram {
 	private int location_skyColor;
 	private int location_rows;
 	private int location_offSet;
+	private int location_plane;
+	
 	
 	public StaticShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -48,17 +51,19 @@ public class StaticShader extends ShaderProgram {
 	protected void getAllUniformLocation() {
 		
 		// TODO Auto-generated method stub
-		location_transformationMatrix = super.getUnitformLocation("transformationMatrix");
-		location_projectionMatrix = super.getUnitformLocation("projectionMatrix");
-		location_viewMatrix = super.getUnitformLocation("viewMatrix");
+		location_transformationMatrix = super.getUniformLocation("transformationMatrix");
+		location_projectionMatrix = super.getUniformLocation("projectionMatrix");
+		location_viewMatrix = super.getUniformLocation("viewMatrix");
 		//location_lightPosition = super.getUnitformLocation("lightPosition");
 		//location_lightColor = super.getUnitformLocation("lightColor");
-		location_shineDamper = super.getUnitformLocation("shineDamper");
-		location_reflectivity = super.getUnitformLocation("reflectivity");
-		location_fakeLighting = super.getUnitformLocation("useFakeLighting");
-		location_skyColor = super.getUnitformLocation("skyColor");
-		location_rows = super.getUnitformLocation("numberOfRows");
-		location_offSet = super.getUnitformLocation("OffSet");
+		location_shineDamper = super.getUniformLocation("shineDamper");
+		location_reflectivity = super.getUniformLocation("reflectivity");
+		location_fakeLighting = super.getUniformLocation("useFakeLighting");
+		location_skyColor = super.getUniformLocation("skyColor");
+		location_rows = super.getUniformLocation("numberOfRows");
+		location_offSet = super.getUniformLocation("OffSet");
+		location_plane = super.getUniformLocation("plane");
+		
 		
 		location_lightPosition = new int[MAX_LIGHT];
 		location_lightColor = new int[MAX_LIGHT];
@@ -66,9 +71,9 @@ public class StaticShader extends ShaderProgram {
 		
 		for(int i=0;i<MAX_LIGHT;i++) {
 			
-			location_lightPosition[i] =super.getUnitformLocation("lightPosition["+i+"]");
-			location_lightColor[i] = super.getUnitformLocation("lightColor["+i+"]");
-			location_attenuation[i] = super.getUnitformLocation("attenuation["+i+"]");
+			location_lightPosition[i] =super.getUniformLocation("lightPosition["+i+"]");
+			location_lightColor[i] = super.getUniformLocation("lightColor["+i+"]");
+			location_attenuation[i] = super.getUniformLocation("attenuation["+i+"]");
 			
 		}
 		
@@ -77,6 +82,11 @@ public class StaticShader extends ShaderProgram {
 		
 		
 
+	}
+	
+	public void loadPlane(Vector4f plane) {
+		super.loadVector4f(location_plane, plane);
+		
 	}
 	
 	

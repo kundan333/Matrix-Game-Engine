@@ -1,0 +1,16 @@
+#version 150 
+in vec3 positions;
+
+uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 transformationMatrix;
+
+void main()
+{
+
+	gl_Position = projectionMatrix * viewMatrix* vec4(positions,1.0);
+
+
+
+
+}
