@@ -42,6 +42,11 @@ void main(void){
 	    
 	    pass_textureCoords = textureCoords;
 	    
+	    
+	   
+	   
+	    
+	    
 	    surfaceNormal = (transformationMatrix * vec4(normals, 0.0)).xyz;
 	    
 	    

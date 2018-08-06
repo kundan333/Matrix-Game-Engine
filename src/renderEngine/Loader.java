@@ -43,6 +43,22 @@ public class Loader {
 		
 	}
 	
+	public RawModel loadToVAO(float[] positions,float[] textureCoords,float[] normals,int[] indices ,float[] tengents ) {
+		int vaoID = createVAO();
+		bindIndicesBuffer(indices);
+		storeDataInAttributeList(0,3,positions);
+		storeDataInAttributeList(1,2,textureCoords);
+		storeDataInAttributeList(2,3,normals);
+		storeDataInAttributeList(3,3,tengents);
+		unbindVAO();
+		//positions.length/3 for counting total number of vertices...
+		return new RawModel(vaoID,indices.length);
+		
+		
+		
+	}
+	
+	
 	public RawModel loadToVAO(float[] positions,int[] indices ) {
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);

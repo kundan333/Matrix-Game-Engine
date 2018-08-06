@@ -25,6 +25,10 @@ uniform vec3 skyColor;
 
 void main(void){
 
+ 		
+
+
+
 	vec4 blendMapColor = texture(blendMap , pass_textureCoords);
 	
 	float backTextureAmount = 1 - (blendMapColor.r + blendMapColor.g + blendMapColor.b);

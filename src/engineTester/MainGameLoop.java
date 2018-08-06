@@ -22,6 +22,7 @@ import entities.Light;
 import entities.Player;
 import models.RawModel;
 import models.TexturedModel;
+import normalMappingObjConverter.NormalMappedObjLoader;
 import objConverter.ModelData;
 import objConverter.OBJFileLoader;
 import physics.AABB;
@@ -208,6 +209,21 @@ public class MainGameLoop {
 		
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
 		
+		List<Entity> normalMapEntities = new ArrayList<Entity>();
+		
+		TexturedModel barrelModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("barrel", loader),new ModelTexture(loader.loadTexture("barrel")) );
+		barrelModel.getTexture().setNormalMap(loader.loadTexture("barrelN3"));
+		barrelModel.getTexture().setShineDamper(10);
+		barrelModel.getTexture().setReflectivity(0.5f);
+		
+		TexturedModel crate = new TexturedModel(NormalMappedObjLoader.loadOBJ("crate", loader),new ModelTexture(loader.loadTexture("crate")) );
+		crate.getTexture().setNormalMap(loader.loadTexture("crateNormal"));
+		crate.getTexture().setShineDamper(10);
+		crate.getTexture().setReflectivity(0.5f);
+		
+		normalMapEntities.add(new Entity(barrelModel, new Vector3f(100,39,-200),0,0,0,1));
+		
+		normalMapEntities.add(new Entity(crate, new Vector3f(115,39,-200),0,0,0,0.05f));
 		
 		/*
 
@@ -239,20 +255,20 @@ public class MainGameLoop {
 			float distance = 2 *(camera.getPosition().y -water.getHeight());
 			camera.getPosition().y -= distance;
 			camera.invertPitch();
-			renderer.renderAll(lights, camera,entities,terrain2,new Vector4f(0,1,0,-water.getHeight()+1) );
+			renderer.renderAll(lights, camera,entities,normalMapEntities,terrain2,new Vector4f(0,1,0,-water.getHeight()+1) );
 			fbos.unbindCurrentFrameBuffer();
 			camera.getPosition().y += distance;
 			camera.invertPitch();
 			
 			//refraction fbo
 			fbos.bindRefractionFrameBuffer();
-			renderer.renderAll(lights, camera,entities,terrain2,new Vector4f(0,-1,0,water.getHeight()+1));
+			renderer.renderAll(lights, camera,entities,normalMapEntities,terrain2,new Vector4f(0,-1,0,water.getHeight()+1));
 			fbos.unbindCurrentFrameBuffer();
 			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 			
 			
 			
-			renderer.renderAll(lights, camera,entities,terrain2,new Vector4f(0,1,0,20000));
+			renderer.renderAll(lights, camera,entities,normalMapEntities,terrain2,new Vector4f(0,1,0,20000));
 		
 			
 			/*
