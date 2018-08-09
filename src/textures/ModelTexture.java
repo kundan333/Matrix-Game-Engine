@@ -1,17 +1,21 @@
 package textures;
+/**
+ * 
+ * @author Kundan
+ *
+ */
 
 public class ModelTexture {
 	
+	
 	private int textureID;
 	private int normalMap;
-	
 	private float shineDamper = 1;
 	private float reflectivity =0;
-	
 	private boolean hasTransparency = false;
 	private boolean fakeLighting = false;
-	
 	private int numberOfRows = 1;
+	
 	
 	
 	public ModelTexture(int id) {

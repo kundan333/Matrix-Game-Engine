@@ -1,5 +1,6 @@
 package engineTester;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -13,21 +14,19 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-import BoundingBoxTest.BBrenderer;
-import Guis.GuiRenderer;
 import Guis.GuiTexture;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
 import entities.Player;
+import fontMeshCreator.FontType;
+import fontMeshCreator.GUIText;
+import fontRendering.TextMaster;
 import models.RawModel;
 import models.TexturedModel;
 import normalMappingObjConverter.NormalMappedObjLoader;
 import objConverter.ModelData;
 import objConverter.OBJFileLoader;
-import physics.AABB;
-import physics.BoundingBox;
-import physics.HandleCollision;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
@@ -53,9 +52,14 @@ public class MainGameLoop {
 		DisplayManager.createDisplay();
 		
 		Loader loader = new Loader();
+		
+		TextMaster.init(loader);
+		
+		FontType font = new FontType(loader.loadTextureForFont("sans"),new File("res/sans.fnt"));
+		GUIText text = new GUIText("The Quick Brown fox jumps over the lazy dog ! 1234567890" , 1,font,new Vector2f(0.5f,0.5f),0.5f,true);
+		
+		
 		List<Entity> entities = new ArrayList<Entity>();
-		
-		
 		
 		ModelData data = OBJFileLoader.loadOBJ("tree");
 		
@@ -286,6 +290,7 @@ public class MainGameLoop {
 			bbrenderer.renderer(camera);
 			*/
 			waterRenderer.render(waters, camera,light);
+			TextMaster.render();
 			
 			/* shader.stop(); */
 			//guiRenderer.render(guis);
@@ -298,6 +303,7 @@ public class MainGameLoop {
 			
 			
 		}
+		TextMaster.cleanUp();
 		fbos.cleanUp();
 		waterShader.cleanUp();
 		//bbrenderer.cleanUp();
