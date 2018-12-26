@@ -27,6 +27,11 @@ import models.TexturedModel;
 import normalMappingObjConverter.NormalMappedObjLoader;
 import objConverter.ModelData;
 import objConverter.OBJFileLoader;
+import particle.Particle;
+import particle.ParticleMaster;
+import particle.ParticleSystem;
+import particle.ParticleSystemTwo;
+import particle.ParticleTexture;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
@@ -55,8 +60,8 @@ public class MainGameLoop {
 		
 		TextMaster.init(loader);
 		
-		FontType font = new FontType(loader.loadTextureForFont("sans"),new File("res/sans.fnt"));
-		GUIText text = new GUIText("The Quick Brown fox jumps over the lazy dog ! 1234567890" , 1,font,new Vector2f(0.5f,0.5f),0.5f,true);
+		FontType font = new FontType(loader.loadTextureForFont("signedsans"),new File("res/signedsans.fnt"));
+		GUIText text = new GUIText("Quick brown fox jumps over the lazy dog" , 1,font,new Vector2f(0f,0f),0.5f,true);
 		
 		
 		List<Entity> entities = new ArrayList<Entity>();
@@ -145,7 +150,7 @@ public class MainGameLoop {
 		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blend"));
 		
-		Terrain terrain2 = new Terrain(0,-1,loader,new TerrainTexturePack(backgroundTexture,rTexture,gTexture,bTexture),blendMap,"heightmap");
+		Terrain terrain2 = new Terrain(0,-1,loader,new TerrainTexturePack(backgroundTexture,rTexture,gTexture,bTexture),blendMap);
 		
 		Random random = new Random();
 		for(int i=0;i<300;i++){
@@ -170,14 +175,13 @@ public class MainGameLoop {
 		List<Light> lights = new ArrayList<Light>();
 		//System.out.println("Height -- "+terrain2.getHeightOfTerrain(200, -200));
 		
-		Light light = new Light(new Vector3f(1025,1000,-1025),new Vector3f(1f,1f,1f));
+		Light light = new Light(new Vector3f(102500,150000,-102500),new Vector3f(1f,1f,1f));
 		lights.add(light);
 		
-		//create a class lamp with leight
+		//create a class lamp with light
 		//lights.add(new Light(new Vector3f(200,15,-200),new Vector3f(10,0,0),new Vector3f(1,0.1f,0.002f)));
-	//	lights.add(new Light(new Vector3f(55.5f,-19,-55.5f),new Vector3f(0,5,0),new Vector3f(1,0.1f,0.002f)));
-		
-	//	entities.add(new Entity(lampModel,new Vector3f(210,6,-202),0,0,0,0.7f));
+		//	lights.add(new Light(new Vector3f(55.5f,-19,-55.5f),new Vector3f(0,5,0),new Vector3f(1,0.1f,0.002f)));
+		//	entities.add(new Entity(lampModel,new Vector3f(210,6,-202),0,0,0,0.7f));
 		//entities.add(new Entity(lampModel,new Vector3f(62,-23,-53),0,0,0,0.7f));
 		
 		entities.add(player);
@@ -201,7 +205,9 @@ public class MainGameLoop {
 		HandleCollision handleCollision = new HandleCollision(player);
 		
 		*/
+		
 		//****************************water render**************
+		
 		WaterFrameBuffers fbos = new WaterFrameBuffers();
 		
 		WaterShader waterShader = new WaterShader();
@@ -240,6 +246,21 @@ public class MainGameLoop {
 		
 		*/
 		
+		ParticleMaster.init(loader, renderer.getProjectionMatrix());
+		//ParticleSystemTwo paticleSystem = new ParticleSystemTwo(30,25,0.3f,4); 
+		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particleAtlas"),4);
+		
+		
+		ParticleSystem system = new ParticleSystem(particleTexture,150,5,0.3f,3,1);
+		system.randomizeRotation();
+		system.setDirection(new Vector3f(0,1,0),0.1f);
+		system.setLifeError(0.1f);
+		system.setSpeedError(0.4f);
+		system.setScaleError(0.5f);
+		
+		
+		//long lastframeTime = getTime()+1000;
+		
 		while(!closeDisplay && !Display.isCloseRequested() ){
 		//	entity.increasePosition(0, 0, -0.02f);
 			//entity.increaseRotation(1, 0, 1);
@@ -253,6 +274,25 @@ public class MainGameLoop {
 			camera.move();
 			
 			picker.update();
+			/*
+			long currentFrameTime = getTime();
+			
+			float deltaTime = currentFrameTime - lastframeTime;
+			
+			if(deltaTime>=1000) {
+				new Particle(new Vector3f(player.getPosition()),new Vector3f(0,30,0),1,4,0,1);
+			
+				lastframeTime = currentFrameTime+1000;
+				
+			}
+			*/
+			
+			
+			//system.generateParticles(new Vector3f( player.getPosition().x, player.getPosition().y+10, player.getPosition().z));
+			//paticleSystem.generateParticles(player.getPosition());
+			
+			ParticleMaster.update(camera);
+
 			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 			
 			fbos.bindReflectionFrameBuffer();
@@ -290,8 +330,13 @@ public class MainGameLoop {
 			bbrenderer.renderer(camera);
 			*/
 			waterRenderer.render(waters, camera,light);
+			
+			ParticleMaster.renderParticles(camera);
+			
+			//---------------------2D stuff-------------//
 			TextMaster.render();
 			
+			//------------------------------------------//
 			/* shader.stop(); */
 			//guiRenderer.render(guis);
 			updateFPS();
@@ -299,10 +344,12 @@ public class MainGameLoop {
 			
 			if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
 				 closeDisplay = true;
+
 			}
 			
 			
 		}
+		ParticleMaster.cleanUp();
 		TextMaster.cleanUp();
 		fbos.cleanUp();
 		waterShader.cleanUp();

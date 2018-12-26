@@ -1,0 +1,19 @@
+#version 400 core
+
+
+ in vec2 txtCoods1;
+ in vec2 txtCoods2;
+ in float blend;
+
+out vec4 out_Color;
+
+uniform sampler2D textureSampler;
+
+void main(){
+
+		vec4 texture1 = texture(textureSampler,txtCoods1); 
+		vec4 texture2 = texture(textureSampler,txtCoods2); 
+
+		out_Color = mix(texture1,texture2,blend); 
+
+		}
