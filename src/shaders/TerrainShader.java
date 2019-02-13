@@ -31,7 +31,10 @@ public class TerrainShader extends ShaderProgram {
 	private int location_bTexture;
 	private int location_blendMap;
 	private int location_plane;
-	
+	private int location_toShadowMapSpace;
+	private int location_shadowDepthMap;
+	private int location_shadowDistance;
+	private int location_shadowMapSize;
 	
 	
 	public TerrainShader() {
@@ -66,7 +69,10 @@ public class TerrainShader extends ShaderProgram {
 		location_bTexture = super.getUniformLocation("bTexture");
 		location_blendMap = super.getUniformLocation("blendMap");
 		location_plane = super.getUniformLocation("plane");
-		
+		location_toShadowMapSpace = super.getUniformLocation("toShadowMapSpace");
+		location_shadowDepthMap = super.getUniformLocation("shadowDepthMap");
+		location_shadowDistance = super.getUniformLocation("shadowDistance");
+		location_shadowMapSize  =  super.getUniformLocation("shadowMapSize");
 		
 		location_lightPosition = new int[MAX_LIGHT];
 		location_lightColor = new int[MAX_LIGHT];
@@ -85,8 +91,23 @@ public class TerrainShader extends ShaderProgram {
 		
 	}
 	
+	public void loadShadowMapSize(float shadowMapSize) {
+		super.loadFloat(location_shadowMapSize, shadowMapSize);
+	}
+	
 	public void loadPlane(Vector4f plane) {
 		super.loadVector4f(location_plane, plane);
+		
+	}
+	
+	public void loadShadowDistance(float shadowDistance) {
+		super.loadFloat(location_shadowDistance, shadowDistance);
+		
+	}
+	
+	
+	public void loadToShadowSpaceMatrix(Matrix4f shadowMapSpace) {
+		super.loadMatrix(location_toShadowMapSpace, shadowMapSpace);
 		
 	}
 	
@@ -139,6 +160,7 @@ public class TerrainShader extends ShaderProgram {
 		super.loadInt(location_gTexture, 2);
 		super.loadInt(location_bTexture, 3);
 		super.loadInt(location_blendMap, 4);
+		super.loadInt(location_shadowDepthMap, 5);
 			
 		
 		

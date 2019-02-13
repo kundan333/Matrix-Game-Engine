@@ -46,7 +46,6 @@ public class EntityRenderer {
 				
 				GL11.glDrawElements(GL11.GL_TRIANGLES,model.getRawModel().getVertexCount(),GL11.GL_UNSIGNED_INT, 0);
 				
-				
 			}
 
 			unbindTexturedModel();

@@ -24,7 +24,7 @@ uniform  mat4 viewMatrix;
 uniform  vec3 lightPosition[4];
 uniform float useFakeLighting;
 
-const float density = 0.0005;
+const float density = 0.0035;
 const float gradient = 5;
 
 uniform vec4 plane ;

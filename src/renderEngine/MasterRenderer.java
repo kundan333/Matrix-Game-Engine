@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector4f;
 
@@ -17,6 +18,7 @@ import models.TexturedModel;
 import normalMappingRenderer.NormalMappingRenderer;
 import shaders.StaticShader;
 import shaders.TerrainShader;
+import shadows.ShadowMapMasterRenderer;
 import skyBox.SkyBoxRenderer;
 import terrains.Terrain;
 
@@ -25,9 +27,9 @@ public class MasterRenderer {
 	private StaticShader shader = new StaticShader();
 	
 	private Matrix4f projectionMatrix;
-	private static final float FOV  = 70;
-	private static final float NEAR_PLANE = 0.1f;
-	private static final float FAR_PLANE = 1000;
+	public static final float FOV  = 70;
+	public static final float NEAR_PLANE = 0.1f;
+	public static final float FAR_PLANE = 1000;
 	public static final float RED =0.5444f ;
 	public static final float GREEN = 0.62f;
 	public static final float BLUE =0.69f ;
@@ -46,10 +48,11 @@ public class MasterRenderer {
 	
 	private SkyBoxRenderer skyboxRenderer;
 	private NormalMappingRenderer normalMapping;
+	private ShadowMapMasterRenderer showdowMasterRenderer;
 	
 	
 	
-	public MasterRenderer(Loader loader) {
+	public MasterRenderer(Loader loader ,Camera cam) {
 		
 		enableCulling();
 		
@@ -60,6 +63,7 @@ public class MasterRenderer {
 		terrainRenderer = new TerrainRenderer(terrainShader,projectionMatrix);
 		
 		skyboxRenderer = new SkyBoxRenderer(loader,projectionMatrix);
+		showdowMasterRenderer = new ShadowMapMasterRenderer(cam);
 	
 	}
 	
@@ -121,7 +125,9 @@ public class MasterRenderer {
 		terrainShader.loadSkyColor(RED, GREEN, BLUE);
 		terrainShader.loadLight(sun);
 		terrainShader.loadViewMatrix(camera);
-		terrainRenderer.render(terrains);
+		terrainShader.loadShadowDistance(showdowMasterRenderer.getShadowDistance());
+		terrainShader.loadShadowMapSize(showdowMasterRenderer.getShadowMapSize());
+		terrainRenderer.render(terrains,showdowMasterRenderer.getToShadowMapSpaceMatrix());
 		terrainShader.stop();
 		
 		skyboxRenderer.render(camera,RED,GREEN,BLUE);
@@ -131,7 +137,7 @@ public class MasterRenderer {
 		normalMapEntities.clear();
 		
 	}
-
+ 
 
 	
 	
@@ -186,6 +192,8 @@ public void prepare() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT|GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glClearColor(RED, GREEN, BLUE, 1);//RGB
 		//GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+		GL13.glActiveTexture(GL13.GL_TEXTURE5);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, getShadowMapTexture());
 		
 		
 	
@@ -211,11 +219,27 @@ private void createProjectionMatrix() {
 	
 	
 }
+
+	
+	public void renderShadowMap(List<Entity> entityList,Light sun) {
+		for(Entity entity : entityList) {
+			processEntity(entity);
+		}
+		showdowMasterRenderer.render(entities, sun);
+		entities.clear();
+		
+		
+	}
+
+	public int getShadowMapTexture() {
+		return showdowMasterRenderer.getShadowMap();
+	}
 	
 	public void cleanUp() {
 		shader.cleanUp();
 		terrainShader.cleanUp();
 		normalMapping.cleanUp();
+		showdowMasterRenderer.cleanUp();
 	
 	}
 	

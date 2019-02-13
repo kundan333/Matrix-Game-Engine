@@ -25,6 +25,8 @@ void main(void){
 	txtCoods2 = txtCoods + txtOffset2;
 	
 	blend = rowsAndBlend.y;
+
+	
 	
 	
 	gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 0.0, 1.0);
