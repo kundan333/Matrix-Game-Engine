@@ -145,11 +145,11 @@ public class MainGameLoop {
 		
 		//entities.add(new Entity(playerModel,new Vector3f(0,0,0),0,0,0,1));
 
-		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grass"));
+		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("tile"));
 		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("mud"));
 		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("pinkFlowers"));
 		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
-		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blend"));
+		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blend2"));
 		
 		Terrain terrain2 = new Terrain(0,-1,loader,new TerrainTexturePack(backgroundTexture,rTexture,gTexture,bTexture),blendMap);
 		
@@ -254,9 +254,9 @@ public class MainGameLoop {
 		ParticleMaster.init(loader, renderer.getProjectionMatrix());
 		
 		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particleAtlas"),4);
-		ParticleSystemTwo paticleSystem = new ParticleSystemTwo(particleTexture,30,25,0.3f,4); 
+		//ParticleSystemTwo paticleSystem = new ParticleSystemTwo(particleTexture,30,25,0.3f,4); 
 		
-		ParticleSystem system = new ParticleSystem(particleTexture,150,5,0.3f,3,1);
+		ParticleSystem system = new ParticleSystem(particleTexture,250,5,0.3f,3,1);
 		system.randomizeRotation();
 		system.setDirection(new Vector3f(0,1,0),0.1f);
 		system.setLifeError(0.1f);
@@ -294,9 +294,9 @@ public class MainGameLoop {
 			
 			
 			//system.generateParticles(new Vector3f( player.getPosition().x, player.getPosition().y+10, player.getPosition().z));
-			paticleSystem.generateParticles(player.getPosition());
+			//paticleSystem.generateParticles(player.getPosition());
 			
-			ParticleMaster.update(camera);
+			//ParticleMaster.update(camera);
 
 			
 			renderer.renderShadowMap(entities, light);

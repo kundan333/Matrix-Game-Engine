@@ -6,15 +6,19 @@ import org.lwjgl.util.vector.Vector3f;
 import models.TexturedModel;
 import renderEngine.DisplayManager;
 import terrains.Terrain;
+import toolbox.Lerp;
 
 public class Player extends Entity {
 	
 
-	private static final float RUN_SPEED = 20;
+	private float RUN_SPEED_GOAL = 0;
+	private static final float RUN_SPEED = 50;
+	//private float TURN_SPEED_GOAL ;
 	private static final float TURN_SPEED = 160;
 	public  static final float GRAVITY = -50;
 	private static final float JUMP_POWER = 30;
 	//private static final float TERRAIN_HEIGHT =0;
+	
 	
 	private float currentSpeed = 0;
 	private float currentTurnSpeed =0; 
@@ -30,6 +34,9 @@ public class Player extends Entity {
 	
 	public void move(Terrain terrain) {
 		checkInputs();
+		
+		currentSpeed = Lerp.interpolate(RUN_SPEED_GOAL, currentSpeed, DisplayManager.getFrameTimeSeconds()*80f);
+		//currentTurnSpeed= Lerp.interpolate(TURN_SPEED_GOAL, currentTurnSpeed, DisplayManager.getFrameTimeSeconds()*80f);
 		super.increaseRotation(0,currentTurnSpeed * DisplayManager.getFrameTimeSeconds()  , 0);
 		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds()  ;
 		
@@ -61,27 +68,36 @@ public class Player extends Entity {
 	}
 	
 	private void checkInputs() {
+		
+		
 		if(Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			
-			this.currentSpeed = RUN_SPEED;
+			//this.currentSpeed = RUN_SPEED;
+			this.RUN_SPEED_GOAL = RUN_SPEED;
+			
 		}
 		else if(Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			this.currentSpeed = -RUN_SPEED;
+			//this.currentSpeed = -RUN_SPEED;
+			this.RUN_SPEED_GOAL =  -RUN_SPEED;
 			
 		}else {
 			
-			this.currentSpeed = 0;
+			//this.currentSpeed = 0;
+			this.RUN_SPEED_GOAL = 0;
 		}
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			
 			this.currentTurnSpeed = -TURN_SPEED;
+			//this.TURN_SPEED_GOAL = -TURN_SPEED;
 		}
 		else if(Keyboard.isKeyDown(Keyboard.KEY_A)) {
 			this.currentTurnSpeed = TURN_SPEED;
+			//this.TURN_SPEED_GOAL = TURN_SPEED;
+			
 			
 		}else {
-			
+			//this.TURN_SPEED_GOAL =0;
 			this.currentTurnSpeed = 0;
 		}
 		
@@ -94,6 +110,8 @@ public class Player extends Entity {
 		
 		
 	}
+	
+	
 	
 	
 	

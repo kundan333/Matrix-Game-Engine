@@ -130,13 +130,15 @@ public class Terrain {
 		for(int i=0;i<VERTEX_COUNT;i++){
 			for(int j=0;j<VERTEX_COUNT;j++){
 				vertices[vertexPointer*3] = (float)j/((float)VERTEX_COUNT - 1) * SIZE;
-				float height = generateHeight(j,i,heightGenerator);
-				
+				//float height = generateHeight(j,i,heightGenerator);
+				float height =0;
 				heights[j][i]=height;
 				
 				vertices[vertexPointer*3+1] = height;
 				vertices[vertexPointer*3+2] = (float)i/((float)VERTEX_COUNT - 1) * SIZE;
-				Vector3f normal = calculateNormal(j,i,heightGenerator);
+				//Vector3f normal = calculateNormal(j,i,heightGenerator);
+				Vector3f normal= new Vector3f(0,1,0);
+				
 				normals[vertexPointer*3] = normal.x;
 				normals[vertexPointer*3+1] = normal.y;
 				normals[vertexPointer*3+2] = normal.z;

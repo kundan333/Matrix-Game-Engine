@@ -16,4 +16,5 @@ void main(){
 
 		out_Color = mix(texture1,texture2,blend); 
 
+		//out_Color = vec4(1.0);
 		}

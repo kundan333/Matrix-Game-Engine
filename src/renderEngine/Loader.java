@@ -10,12 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL33;
+import org.lwjgl.opengl.GLContext;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -42,16 +45,6 @@ public class Loader {
 				
 	}
 	
-	
-	public int loadToVAO(float[] positions,float[] textureCoords) {
-		int vaoID = createVAO();
-		storeDataInAttributeList(0,2,positions);
-		storeDataInAttributeList(1,2,textureCoords);
-		unbindVAO();
-		//positions.length/3 for counting total number of vertices...
-		return vaoID;
-		
-	}
 
 	
 	
@@ -95,6 +88,51 @@ public class Loader {
 		
 	}
 	
+	public int loadToVAO(float[] positions,float[] textureCoords) {
+		int vaoID = createVAO();
+		storeDataInAttributeList(0,2,positions);
+		storeDataInAttributeList(1,2,textureCoords);
+		unbindVAO();
+		//positions.length/3 for counting total number of vertices...
+		return vaoID;
+		
+	}
+	public int createEmptyVbo(int floatCount) {
+		int vbo = GL15.glGenBuffers();
+		vbos.add(vbo);
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER,vbo);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER,floatCount *4, GL15.GL_STREAM_DRAW);
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		return vbo;
+		
+	}
+	
+	public void addInstancedAttribute(int vao,int vbo,int attribute,int dataSize,
+			int instancedDataLength,int offset) {
+		
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
+		GL30.glBindVertexArray(vao);
+		GL20.glVertexAttribPointer(attribute, dataSize, GL11.GL_FLOAT,false,instancedDataLength*4 , offset*4);
+		GL33.glVertexAttribDivisor(attribute, 1);//after one instance data will change
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		GL30.glBindVertexArray(0);
+	
+	
+	}
+	
+	public void updateVbo(int vbo,float[] data,FloatBuffer buffer) {
+	
+		buffer.clear();
+		buffer.put(data);
+		buffer.flip();
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer.capacity()*4, GL15.GL_STREAM_DRAW);
+		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, buffer);
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		
+	}
+	
+	
 	
 	public int loadTexture(String filename) {
 		Texture texture = null ;
@@ -103,8 +141,17 @@ public class Loader {
 			texture = TextureLoader.getTexture("PNG", new FileInputStream("res/"+filename+".png"));
 			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
-			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, -0.4f);
+			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, 0);
 		
+			if(GLContext.getCapabilities().GL_EXT_texture_filter_anisotropic) {
+				float amount = Math.min(4f, GL11.glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT));
+				GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, amount);
+			}
+			else {
+				System.out.println("Not Supported Anisotropic");
+			}
+			
+			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 		    System.out.println("File not Found");
