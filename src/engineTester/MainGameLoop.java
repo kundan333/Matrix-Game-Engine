@@ -14,8 +14,11 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+import BoundingBoxTest.BBrenderer;
+import BoundingBoxTest.BoundingBoxInfo;
 import Guis.GuiRenderer;
 import Guis.GuiTexture;
+import entities.Ball;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
@@ -33,6 +36,10 @@ import particle.ParticleMaster;
 import particle.ParticleSystem;
 import particle.ParticleSystemTwo;
 import particle.ParticleTexture;
+import physics.AABB;
+
+import physics.HandleCollision;
+import physics.SphereCollider;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
@@ -52,6 +59,24 @@ public class MainGameLoop {
 	public static boolean closeDisplay =false;
 	
 	
+	/**
+	 * @param args
+	 */
+	/**
+	 * @param args
+	 */
+	/**
+	 * @param args
+	 */
+	/**
+	 * @param args
+	 */
+	/**
+	 * @param args
+	 */
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args){
 		
 		
@@ -66,6 +91,22 @@ public class MainGameLoop {
 		
 		
 		List<Entity> entities = new ArrayList<Entity>();
+		
+		
+		//-------------Aircraft----------------//
+		ModelData airCraftData = OBJFileLoader.loadOBJ("AirC");
+		RawModel airCraftModel = loader.loadToVAO(airCraftData.getVertices(), airCraftData.getTextureCoords(), airCraftData.getNormals(), airCraftData.getIndices());
+		ModelTexture modelTexture = new ModelTexture(loader.loadTexture("white"));
+		modelTexture.setReflectivity(1f);
+		modelTexture.setShineDamper(5f);
+		TexturedModel airCraft = new TexturedModel(airCraftModel,modelTexture);
+		Entity airCraftEntity =new Entity(airCraft, new Vector3f(30,7,-60),0,0,0,6);
+		//entities.add(airCraftEntity);
+		
+		
+		//-------------Aircraft----------------//
+		
+		
 		
 		ModelData data = OBJFileLoader.loadOBJ("tree");
 		
@@ -110,6 +151,7 @@ public class MainGameLoop {
 		//fernModel.getTexture().setFakeLighting(true);
 		
 		ModelData playerData = OBJFileLoader.loadOBJ("lowpolychar");
+	
 
 //		System.out.println("minX = " +playerBB.getMinX() +"minY = "+ playerBB.getMinY()+"minZ = "+ playerBB.getMinZ() 
 	//	+"maxX = "	+ playerBB.getMaxX()+"maxY = "+ playerBB.getMaxY() +"maxZ = "+ playerBB.getMaxZ()	
@@ -121,9 +163,10 @@ public class MainGameLoop {
 		TexturedModel playerModel = new TexturedModel(rawPlayer,new ModelTexture(loader.loadTexture("lowpolycharuv")));
 		
 
-		Player player = new Player(playerModel,new Vector3f(0,0,0),0,0,0,1);
-
-		/*
+		Player player = new Player(playerModel,new Vector3f(0,0,0),0,0,0,2);
+		
+		//physics.BoundingBox bbPlayer = AABB.calculateBoundingBox(playerData.getVertices(),player.getScale(),new Vector3f(0,0,0));
+			/*
 		
 		ModelData dataBunny = OBJFileLoader.loadOBJ("bnny");
 		
@@ -153,6 +196,31 @@ public class MainGameLoop {
 		
 		Terrain terrain2 = new Terrain(0,-1,loader,new TerrainTexturePack(backgroundTexture,rTexture,gTexture,bTexture),blendMap);
 		
+		
+		//-------------ball----------------//
+				ModelData ballData = OBJFileLoader.loadOBJ("ball");
+				RawModel ballModel = loader.loadToVAO(ballData.getVertices(), ballData.getTextureCoords(), ballData.getNormals(), ballData.getIndices());
+				ModelTexture ballModelTexture = new ModelTexture(loader.loadTexture("ball"));
+				//modelTexture.setReflectivity(1f);
+				//modelTexture.setShineDamper(5f);
+				TexturedModel ball = new TexturedModel(ballModel,ballModelTexture);
+				
+				float ballY= terrain2.getHeightOfTerrain(30, -60);
+				//Entity ballEntity =new Entity(ball, new Vector3f(30,ballY,-60),0,0,0,1);
+				Vector3f ballPosition = new Vector3f(30,ballY,-60);
+				SphereCollider sphereCollider = new SphereCollider(ballData.getFurthestPoint(),ballPosition);
+				Ball mBall = new Ball(ball,ballPosition,0,0,0,1,sphereCollider); 
+				
+				Vector3f ballPosition2 = new Vector3f(30,ballY+1,-60);
+				SphereCollider sphereCollider2 = new SphereCollider(ballData.getFurthestPoint(),ballPosition2);
+				Ball mBall2 = new Ball(ball,ballPosition2,0,0,0,1,sphereCollider2); 
+				
+				entities.add(mBall); 
+				entities.add(mBall2); 
+				
+		//-------------ball----------------//
+		
+		
 		Random random = new Random();
 		for(int i=0;i<300;i++){
 			
@@ -165,7 +233,7 @@ public class MainGameLoop {
 			float yf = terrain2.getHeightOfTerrain(xf, zf);
 			
 			//if(!(y<=10 || yf<=10)) {
-			entities.add(new Entity(staticModel, new Vector3f(x,y,z),0,0,0,4));
+			entities.add(new Entity(staticModel, new Vector3f(x,y,z),0,0,0,10));
 			
 			entities.add(new Entity(fernModel,random.nextInt(4),new Vector3f(xf,yf,zf),0,0,0,0.5f));
 			//}
@@ -197,15 +265,11 @@ public class MainGameLoop {
 		
 		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(),terrain2);
 		
-		//BBrenderer bbrenderer = new BBrenderer(loader,bbPlayer,renderer.getProjectionMatrix());
+	
 		
 		lastFPS = getTime();
-		/*
-		 * collision handle
-		BBrenderer bbrenderer =null ;
-		HandleCollision handleCollision = new HandleCollision(player);
 		
-		*/
+	
 		
 		//****************************water render**************
 		
@@ -232,13 +296,13 @@ public class MainGameLoop {
 		crate.getTexture().setShineDamper(10);
 		crate.getTexture().setReflectivity(0.5f);
 		
-		normalMapEntities.add(new Entity(barrelModel, new Vector3f(100,39,-200),0,0,0,1));
+		normalMapEntities.add(new Entity(barrelModel, new Vector3f(100,7,-200),0,0,0,1));
 		
-		normalMapEntities.add(new Entity(crate, new Vector3f(115,39,-200),0,0,0,0.05f));
+		normalMapEntities.add(new Entity(crate, new Vector3f(115,5,-200),0,0,0,0.05f));
 		
-		GuiTexture shadowMap = new GuiTexture(renderer.getShadowMapTexture(),new Vector2f(0.5f,0.5f),new Vector2f(0.25f,0.25f));
+		/*GuiTexture shadowMap = new GuiTexture(renderer.getShadowMapTexture(),new Vector2f(0.5f,0.5f),new Vector2f(0.25f,0.25f));
 		
-		GuiRenderer guiRenderer = new GuiRenderer(loader);
+		GuiRenderer guiRenderer = new GuiRenderer(loader);*/
 		//guis.add(shadowMap);
 		/*
 
@@ -266,6 +330,21 @@ public class MainGameLoop {
 		
 		//long lastframeTime = getTime()+1000;
 		
+		
+		
+		//-------bounding box stuff----------//
+		BoundingBoxInfo boundingBox = new BoundingBoxInfo(new Vector3f(0,0,0),new Vector3f(3,3,3),new Vector3f(0,0,0),1);
+		
+		BBrenderer bbrenderer = new BBrenderer(loader,boundingBox,renderer.getProjectionMatrix());
+		
+		
+		
+		
+		
+		
+		//-------bounding box stuff----------//
+	
+		
 		while(!closeDisplay && !Display.isCloseRequested() ){
 		//	entity.increasePosition(0, 0, -0.02f);
 			//entity.increaseRotation(1, 0, 1);
@@ -273,7 +352,23 @@ public class MainGameLoop {
 		
 			
 			player.move(terrain2);
+			
+			//-----------------ball test------------//
+			
+			mBall.actions(terrain2);
+			
+			if(mBall.getSphereCollider().overlap(mBall2.getSphereCollider())) {
+				System.out.println("overlapping");
+			}
+			/*if(Keyboard.isKeyDown(Keyboard.KEY_Y)) {
+				mBall.increasePosition(0, 0.1f, 0);
+				
+			}*/
+			
+			//mBall2.actions(terrain2);
 		
+			//-----------------ball test------------//
+			
 			//	System.out.println(" player x "+player.getPosition().getX()+ "player y "+player.getPosition().getY()+" player z"+player.getPosition().getX()); 
 			
 			camera.move();
@@ -321,22 +416,34 @@ public class MainGameLoop {
 			
 			renderer.renderAll(lights, camera,entities,normalMapEntities,terrain2,new Vector4f(0,1,0,20000));
 		
+			//----------Bounding box stuff-------------//
+			bbrenderer.renderer(camera);
 			
-			/*
-			BoundingBox playerBB = AABB.calculateBoundingBox(playerData.getVertices(),player.getScale(),player.getPosition());
+			/*BoundingBox bbPlayerBox = new BoundingBox(new Vector3f(bbPlayer.getMinX(),bbPlayer.getMinY(),bbPlayer.getMinZ()),new Vector3f(bbPlayer.getMaxX(),bbPlayer.getMaxY(),bbPlayer.getMaxZ()),player.getPosition(),player.getScale());
+
+			BBrenderer bbrenderer = new BBrenderer(loader,bbPlayerBox,renderer.getProjectionMatrix());
+			//HandleCollision handleCollision = new HandleCollision(player);
 			
-			
-			handleCollision.CheckPlayerCollision(playerBB, BunnyBB);
+			//handleCollision.CheckPlayerCollision(playerBB, BunnyBB);
 
 			
 			BoundingBoxTest.BoundingBox bbBunny = new BoundingBoxTest.BoundingBox(
 					new Vector3f(BunnyBB.getMinX(),BunnyBB.getMinY(),BunnyBB.getMinZ()),
 					new Vector3f(BunnyBB.getMaxX(),BunnyBB.getMaxY(),BunnyBB.getMaxZ()),
 					bunny.getPosition(),bunny.getScale());
-			bbrenderer = new BBrenderer(loader,bbBunny,renderer.getProjectionMatrix());
+					
+			//bbrenderer = new BBrenderer(loader,bbPlayerBox,renderer.getProjectionMatrix());
 			bbrenderer.renderer(camera);
 			*/
+			
+			
+			//end of bounding box stuff
+			
+			
 			waterRenderer.render(waters, camera,light);
+			
+			//airCraftEntity.increaseRotation(0, 10*DisplayManager.getFrameTimeSeconds(), 0);
+			
 			
 			ParticleMaster.renderParticles(camera);
 			
@@ -360,7 +467,7 @@ public class MainGameLoop {
 		TextMaster.cleanUp();
 		fbos.cleanUp();
 		waterShader.cleanUp();
-		//bbrenderer.cleanUp();
+		bbrenderer.cleanUp();
 		//guiRenderer.cleanUp();
 		renderer.cleanUp();
 		loader.cleanUP();

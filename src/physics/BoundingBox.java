@@ -70,8 +70,10 @@ public class BoundingBox {
 			return new Vector3f(0,0,0);
 			
 		}
+		//and player kept trying  to  overlap then make its velocity sideways
 		
 		return new Vector3f(x,y,z);
+		
 		
 		
 		

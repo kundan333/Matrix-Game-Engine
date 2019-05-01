@@ -35,7 +35,7 @@ public class Player extends Entity {
 	public void move(Terrain terrain) {
 		checkInputs();
 		
-		currentSpeed = Lerp.interpolate(RUN_SPEED_GOAL, currentSpeed, DisplayManager.getFrameTimeSeconds()*80f);
+		currentSpeed = Lerp.interpolate(RUN_SPEED_GOAL, currentSpeed, DisplayManager.getFrameTimeSeconds()*120f);
 		//currentTurnSpeed= Lerp.interpolate(TURN_SPEED_GOAL, currentTurnSpeed, DisplayManager.getFrameTimeSeconds()*80f);
 		super.increaseRotation(0,currentTurnSpeed * DisplayManager.getFrameTimeSeconds()  , 0);
 		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds()  ;
