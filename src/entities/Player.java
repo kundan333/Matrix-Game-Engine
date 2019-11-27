@@ -3,6 +3,8 @@ package entities;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
+import audio.AudioMaster;
+import audio.AudioSource;
 import models.TexturedModel;
 import renderEngine.DisplayManager;
 import terrains.Terrain;
@@ -15,7 +17,7 @@ public class Player extends Entity {
 	private static final float RUN_SPEED = 50;
 	//private float TURN_SPEED_GOAL ;
 	private static final float TURN_SPEED = 160;
-	public  static final float GRAVITY = -50;
+	public  static final float GRAVITY = -80;
 	private static final float JUMP_POWER = 30;
 	//private static final float TERRAIN_HEIGHT =0;
 	
@@ -27,9 +29,15 @@ public class Player extends Entity {
 	
 	private boolean inAir = false;
 	
-	public Player(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+	private AudioSource playerAudioSource;
+	private int buffer;
+	
+	public Player(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale,int playerAudioBuffer) {
 		super(model, position, rotX, rotY, rotZ, scale);
 		// TODO Auto-generated constructor stub
+		playerAudioSource = new AudioSource();
+		this.buffer = playerAudioBuffer;
+		
 	}
 	
 	public void move(Terrain terrain) {
@@ -64,6 +72,11 @@ public class Player extends Entity {
 		if(!inAir) {
 		this.upwardsSpeed = JUMP_POWER;
 		inAir = true;
+		AudioMaster.setListenerData(getPosition());
+		playerAudioSource.setPosition(this.getPosition());
+		//System.out.println(this.getPosition());
+		playerAudioSource.play(buffer);
+		
 		}
 	}
 	

@@ -55,10 +55,6 @@ public class HeightsGenerator {
 		
 		return interpolated(i1,i2,fracZ);
 		
-		
-		
-		
-		
 	}
 	
 	

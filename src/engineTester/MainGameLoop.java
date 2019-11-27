@@ -18,6 +18,7 @@ import BoundingBoxTest.BBrenderer;
 import BoundingBoxTest.BoundingBoxInfo;
 import Guis.GuiRenderer;
 import Guis.GuiTexture;
+import audio.AudioMaster;
 import entities.Ball;
 import entities.Camera;
 import entities.Entity;
@@ -40,6 +41,8 @@ import physics.AABB;
 
 import physics.HandleCollision;
 import physics.SphereCollider;
+import postProcessing.Fbo;
+import postProcessing.PostProcessing;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
@@ -85,6 +88,19 @@ public class MainGameLoop {
 		Loader loader = new Loader();
 		
 		TextMaster.init(loader);
+		
+		
+		
+		//---------audio stuff-----//
+		//before using sources
+		
+			AudioMaster.init();
+			AudioMaster.setListenerData(new Vector3f(0,0,0));
+			int buffer = AudioMaster.loadSound("audio/jumpmono.wav");
+			
+			//---------audio stuff-----//
+
+		
 		
 		FontType font = new FontType(loader.loadTextureForFont("signedsans"),new File("res/signedsans.fnt"));
 		GUIText text = new GUIText("Quick brown fox jumps over the lazy dog" , 1,font,new Vector2f(0f,0f),0.5f,true);
@@ -163,7 +179,7 @@ public class MainGameLoop {
 		TexturedModel playerModel = new TexturedModel(rawPlayer,new ModelTexture(loader.loadTexture("lowpolycharuv")));
 		
 
-		Player player = new Player(playerModel,new Vector3f(0,0,0),0,0,0,2);
+		Player player = new Player(playerModel,new Vector3f(0,0,0),0,0,0,2,buffer);
 		
 		//physics.BoundingBox bbPlayer = AABB.calculateBoundingBox(playerData.getVertices(),player.getScale(),new Vector3f(0,0,0));
 			/*
@@ -295,10 +311,11 @@ public class MainGameLoop {
 		crate.getTexture().setNormalMap(loader.loadTexture("crateNormal"));
 		crate.getTexture().setShineDamper(10);
 		crate.getTexture().setReflectivity(0.5f);
+		Entity entityc=  new Entity(crate, new Vector3f(115,5,-200),0,0,0,0.05f);
 		
 		normalMapEntities.add(new Entity(barrelModel, new Vector3f(100,7,-200),0,0,0,1));
 		
-		normalMapEntities.add(new Entity(crate, new Vector3f(115,5,-200),0,0,0,0.05f));
+		normalMapEntities.add(entityc);
 		
 		/*GuiTexture shadowMap = new GuiTexture(renderer.getShadowMapTexture(),new Vector2f(0.5f,0.5f),new Vector2f(0.25f,0.25f));
 		
@@ -345,10 +362,20 @@ public class MainGameLoop {
 		//-------bounding box stuff----------//
 	
 		
+		//MousePicker picker  = new MousePicker(camera,renderer.getProjectionMatrix(),terrain2);
+		
+		
+		//post processing
+		
+		Fbo multisampledFbo = new Fbo(Display.getWidth(),Display.getHeight());
+		Fbo outputFbo = new Fbo(Display.getWidth(),Display.getHeight(),Fbo.DEPTH_TEXTURE);
+		PostProcessing.init(loader);
+		
 		while(!closeDisplay && !Display.isCloseRequested() ){
 		//	entity.increasePosition(0, 0, -0.02f);
 			//entity.increaseRotation(1, 0, 1);
 
+			
 		
 			
 			player.move(terrain2);
@@ -374,6 +401,12 @@ public class MainGameLoop {
 			camera.move();
 			
 			picker.update();
+			
+			Vector3f terrainPoint = picker.getCurrentTerrainPoint();
+			if(terrainPoint!=null) {
+			entityc.setPosition(terrainPoint);
+			}
+			System.out.println(picker.getCurrentRay());
 			/*
 			long currentFrameTime = getTime();
 			
@@ -395,8 +428,8 @@ public class MainGameLoop {
 
 			
 			renderer.renderShadowMap(entities, light);
-			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 			
+			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);	
 			fbos.bindReflectionFrameBuffer();
 			float distance = 2 *(camera.getPosition().y -water.getHeight());
 			camera.getPosition().y -= distance;
@@ -412,8 +445,7 @@ public class MainGameLoop {
 			fbos.unbindCurrentFrameBuffer();
 			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 			
-			
-			
+			multisampledFbo.bindFrameBuffer();
 			renderer.renderAll(lights, camera,entities,normalMapEntities,terrain2,new Vector4f(0,1,0,20000));
 		
 			//----------Bounding box stuff-------------//
@@ -440,12 +472,22 @@ public class MainGameLoop {
 			//end of bounding box stuff
 			
 			
-			waterRenderer.render(waters, camera,light);
+			
 			
 			//airCraftEntity.increaseRotation(0, 10*DisplayManager.getFrameTimeSeconds(), 0);
 			
 			
 			ParticleMaster.renderParticles(camera);
+			
+			waterRenderer.render(waters, camera,light);
+			
+			
+			multisampledFbo.unbindFrameBuffer();
+			
+			//multisampledFbo.resolveToScreen();
+			multisampledFbo.resolveToFbo(outputFbo);
+			PostProcessing.doPostProcessing(outputFbo.getColourTexture());
+			
 			
 			//---------------------2D stuff-------------//
 			TextMaster.render();
@@ -463,6 +505,10 @@ public class MainGameLoop {
 			
 			
 		}
+		multisampledFbo.cleanUp();
+		outputFbo.cleanUp();
+		PostProcessing.cleanUp();
+		AudioMaster.cleanUp();
 		ParticleMaster.cleanUp();
 		TextMaster.cleanUp();
 		fbos.cleanUp();

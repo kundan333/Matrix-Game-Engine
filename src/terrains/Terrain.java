@@ -75,8 +75,11 @@ public class Terrain {
 	
 	public float getHeightOfTerrain(float worldX,float worldZ) 
 	{
+		
+		System.out.println("x  is = "+x+" z= "+z);
 		float terrainX = worldX -this.x;
 		float terrainZ = worldZ - this.z;
+		System.out.println("train x  is = "+terrainX+" z= "+terrainZ);
 	//	System.out.println("worldX : "+worldX+" worldZ : "+worldZ);
 	//	System.out.println("this.x : "+this.x+" this.z : "+this.z);
 		//System.out.println(heights.length-1);
@@ -95,6 +98,10 @@ public class Terrain {
 		//System.out.println(" terrainX % gridSquareSize : " +terrainX % gridSquareSize);
 		
 		float zCoord = (terrainX % gridSquareSize)/gridSquareSize;
+		
+
+//		System.out.println(" xCoord is= "+xCoord+" zCoord is =  "+zCoord);
+		
 		float answer;
 		
 		if (xCoord <= (1-zCoord)) {

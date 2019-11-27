@@ -45,6 +45,8 @@ public class MousePicker {
 		viewMatrix = Maths.createViewMatrix(camera);
 		currentRay = calculateMouseRay();
 		
+		
+		
 		if (intersectionInRange(0, RAY_RANGE, currentRay)) {
 			currentTerrainPoint = binarySearch(0, 0, RAY_RANGE, currentRay);
 		} else {
@@ -156,6 +158,10 @@ public class MousePicker {
 	
 	private Terrain getTerrain(float worldX, float worldZ) {
 		return terrain;
+	}
+
+	public Vector3f getCurrentTerrainPoint() {
+		return currentTerrainPoint;
 	}
 
 	

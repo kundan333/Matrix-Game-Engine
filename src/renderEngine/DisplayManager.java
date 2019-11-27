@@ -27,7 +27,7 @@ public class DisplayManager {
 			
 			Display.setDisplayMode(new DisplayMode(WIDTH,HEIGHT) );
 			//Display.setFullscreen(true);
-			Display.create(new PixelFormat().withSamples(4),attribs);
+			Display.create(new PixelFormat().withDepthBits(24),attribs);
 			//Display.setTitle("Java Game");
 			GL11.glEnable(GL13.GL_MULTISAMPLE);
 			
